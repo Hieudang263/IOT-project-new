@@ -1,44 +1,37 @@
 // ==================== WEBSOCKET ====================
-var gateway = `ws://${window.location.hostname}/ws`;
-var websocket;
 
-window.addEventListener('load', function() {
+// Dùng host (có cả port) để WebSocket luôn đúng với port 8080
+var gateway = `ws://${window.location.host}/ws`;
+var websocket = null;
+
+window.addEventListener('load', function () {
     initWebSocket();
     initGauges();
     loadCoreIOTConfig();
-    initLEDControls(); // ✅ THÊM
 });
 
-function onOpen(event) {
-    console.log('✅ WebSocket connected');
-}
-
-function onClose(event) {
-    console.log('❌ WebSocket closed');
-    setTimeout(initWebSocket, 2000);
-}
-
 function initWebSocket() {
-    console.log('🔄 Opening WebSocket...');
+    console.log('🔌 Mở kết nối WebSocket...');
     websocket = new WebSocket(gateway);
     websocket.onopen = onOpen;
     websocket.onclose = onClose;
     websocket.onmessage = onMessage;
 }
 
-function Send_Data(data) {
-    if (websocket && websocket.readyState === WebSocket.OPEN) {
-        websocket.send(data);
-        console.log("📤 Sent:", data);
-    } else {
-        console.warn("⚠️ WebSocket not ready!");
-    }
+function onOpen(event) {
+    console.log('✅ WebSocket đã kết nối');
+}
+
+function onClose(event) {
+    console.log('⚠️ WebSocket đóng, thử lại sau 2s...');
+    setTimeout(initWebSocket, 2000);
 }
 
 function onMessage(event) {
-    console.log("📩 Received:", event.data);
+    console.log("📩 Nhận:", event.data);
     try {
         var data = JSON.parse(event.data);
+        // Cập nhật gauge nếu có dữ liệu
         if (data.temp !== undefined && window.gaugeTemp) {
             window.gaugeTemp.refresh(data.temp);
         }
@@ -46,7 +39,17 @@ function onMessage(event) {
             window.gaugeHumi.refresh(data.humi);
         }
     } catch (e) {
-        console.warn("Not JSON:", event.data);
+        console.warn("Dữ liệu không phải JSON:", event.data);
+    }
+}
+
+function Send_Data(data) {
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+        var payload = (typeof data === "string") ? data : JSON.stringify(data);
+        websocket.send(payload);
+        console.log("📤 Gửi:", payload);
+    } else {
+        console.warn("⚠️ WebSocket chưa sẵn sàng, không thể gửi!");
     }
 }
 
@@ -55,11 +58,17 @@ let relayList = [];
 let deleteTarget = null;
 
 function showSection(id, event) {
+    // Ẩn tất cả section
     document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
-    document.getElementById(id).style.display = id === 'settings' ? 'flex' : 'block';
+
+    // Hiện section được chọn
+    document.getElementById(id).style.display = (id === 'settings') ? 'flex' : 'block';
+
+    // Active menu
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
     event.currentTarget.classList.add('active');
-    
+
+    // Khi mở Settings thì load config
     if (id === 'settings') {
         loadCoreIOTConfig();
     }
@@ -94,93 +103,33 @@ function initGauges() {
     });
 }
 
-// ==================== LED BRIGHTNESS CONTROL ====================
-function initLEDControls() {
-    // LED 1
-    const toggle1 = document.getElementById('led1Toggle');
-    const slider1 = document.getElementById('led1Brightness');
-    const value1 = document.getElementById('led1Value');
-    
-    if (toggle1 && slider1) {
-        toggle1.addEventListener('change', function() {
-            const isOn = this.checked;
-            slider1.disabled = !isOn;
-            
-            if (isOn) {
-                slider1.parentElement.classList.add('slider-enabled');
-                controlLED(1, 'ON', slider1.value);
-            } else {
-                slider1.parentElement.classList.remove('slider-enabled');
-                controlLED(1, 'OFF', 0);
-            }
-        });
-        
-        slider1.addEventListener('input', function() {
-            value1.textContent = this.value + '%';
-            if (toggle1.checked) {
-                controlLED(1, 'ON', this.value);
-            }
-        });
-    }
-    
-    // LED 2
-    const toggle2 = document.getElementById('led2Toggle');
-    const slider2 = document.getElementById('led2Brightness');
-    const value2 = document.getElementById('led2Value');
-    
-    if (toggle2 && slider2) {
-        toggle2.addEventListener('change', function() {
-            const isOn = this.checked;
-            slider2.disabled = !isOn;
-            
-            if (isOn) {
-                slider2.parentElement.classList.add('slider-enabled');
-                controlLED(2, 'ON', slider2.value);
-            } else {
-                slider2.parentElement.classList.remove('slider-enabled');
-                controlLED(2, 'OFF', 0);
-            }
-        });
-        
-        slider2.addEventListener('input', function() {
-            value2.textContent = this.value + '%';
-            if (toggle2.checked) {
-                controlLED(2, 'ON', this.value);
-            }
-        });
-    }
-}
-
-function controlLED(device, state, brightness) {
-    // Via HTTP GET
-    fetch(`/control?device=${device}&state=${state}&brightness=${brightness}`)
-        .then(response => response.text())
-        .then(data => {
-            console.log(`✅ LED${device}: ${state} @ ${brightness}%`);
-        })
-        .catch(err => {
-            console.error('❌ Control error:', err);
-        });
-}
-
-// ==================== RELAY FUNCTIONS (GIỮ NGUYÊN) ====================
+// ==================== DEVICE FUNCTIONS ====================
 function openAddRelayDialog() {
     document.getElementById('addRelayDialog').style.display = 'flex';
 }
+
 function closeAddRelayDialog() {
     document.getElementById('addRelayDialog').style.display = 'none';
 }
+
 function saveRelay() {
     const name = document.getElementById('relayName').value.trim();
     const gpio = document.getElementById('relayGPIO').value.trim();
-    if (!name || !gpio) return alert("⚠️ Fill all fields!");
+
+    if (!name || !gpio) {
+        alert("⚠️ Vui lòng điền đầy đủ tên và GPIO!");
+        return;
+    }
+
     relayList.push({ id: Date.now(), name, gpio, state: false });
     renderRelays();
     closeAddRelayDialog();
 }
+
 function renderRelays() {
     const container = document.getElementById('relayContainer');
     container.innerHTML = "";
+
     relayList.forEach(r => {
         const card = document.createElement('div');
         card.className = 'device-card';
@@ -196,86 +145,108 @@ function renderRelays() {
         container.appendChild(card);
     });
 }
+
 function toggleRelay(id) {
     const relay = relayList.find(r => r.id === id);
     if (relay) {
         relay.state = !relay.state;
-        Send_Data(JSON.stringify({
+
+        Send_Data({
             page: "device",
-            value: { name: relay.name, status: relay.state ? "ON" : "OFF", gpio: relay.gpio }
-        }));
+            value: {
+                name: relay.name,
+                status: relay.state ? "ON" : "OFF",
+                gpio: relay.gpio
+            }
+        });
+
         renderRelays();
     }
 }
+
 function showDeleteDialog(id) {
     deleteTarget = id;
     document.getElementById('confirmDeleteDialog').style.display = 'flex';
 }
+
 function closeConfirmDelete() {
     document.getElementById('confirmDeleteDialog').style.display = 'none';
 }
+
 function confirmDelete() {
     relayList = relayList.filter(r => r.id !== deleteTarget);
     renderRelays();
     closeConfirmDelete();
 }
 
-// ==================== COREIOT CONFIG API (GIỮ NGUYÊN) ====================
+// ==================== COREIOT CONFIG API ====================
+
+// Load config từ ESP32
 async function loadCoreIOTConfig() {
     try {
         const response = await fetch('/api/coreiot/config');
         if (!response.ok) {
-            console.warn("⚠️ Cannot load config");
+            console.warn("⚠️ Không load được CoreIOT config");
             return;
         }
-        
+
         const data = await response.json();
-        
-        if (data.server) document.getElementById('server').value = data.server;
-        if (data.port) document.getElementById('port').value = data.port;
+
+        // Điền vào form (WiFi phần này ESP32 không dùng, chỉ MQTT)
+        if (data.server)    document.getElementById('server').value = data.server;
+        if (data.port)      document.getElementById('port').value = data.port;
         if (data.client_id) document.getElementById('client_id').value = data.client_id;
-        if (data.username) document.getElementById('mqtt_username').value = data.username;
-        
+        if (data.username)  document.getElementById('mqtt_username').value = data.username;
+
+        // Nếu đã có password trên ESP32 thì báo cho người dùng
+        const mqttPassInput = document.getElementById('mqtt_password');
+        mqttPassInput.value = "";
         if (data.password_set) {
-            document.getElementById('mqtt_password').placeholder = "Password đã lưu (để trống = giữ nguyên)";
+            mqttPassInput.placeholder = "Mật khẩu đã lưu (để trống = giữ nguyên)";
+        } else {
+            mqttPassInput.placeholder = "Password (MQTT)";
         }
-        
-        console.log("✅ Config loaded");
+
+        console.log("✅ Đã load CoreIOT config");
     } catch (error) {
-        console.error("❌ Load error:", error);
+        console.error("❌ Lỗi load config:", error);
     }
 }
 
+// Lưu config lên ESP32
 document.getElementById("settingsForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const ssid = document.getElementById("ssid").value.trim();
-    const password = document.getElementById("password").value.trim();
-    const server = document.getElementById("server").value.trim();
-    const portValue = document.getElementById("port").value.trim();
-    const client_id = document.getElementById("client_id").value.trim();
+    const ssid          = document.getElementById("ssid").value.trim();      // hiện tại ESP32 chưa dùng
+    const wifiPassword  = document.getElementById("password").value.trim();  // hiện tại ESP32 chưa dùng
+    const server        = document.getElementById("server").value.trim();
+    const portValue     = document.getElementById("port").value.trim();
+    const client_id     = document.getElementById("client_id").value.trim();
     const mqtt_username = document.getElementById("mqtt_username").value.trim();
     const mqtt_password = document.getElementById("mqtt_password").value.trim();
 
-    const port = parseInt(portValue);
+    // Kiểm tra port
+    const port = parseInt(portValue, 10);
     if (!Number.isInteger(port) || port <= 0 || port > 65535) {
         alert("⚠️ Port không hợp lệ! (1-65535)");
         return;
     }
 
+    // Kiểm tra field bắt buộc
     if (!server || !client_id || !mqtt_username) {
-        alert("⚠️ Vui lòng điền đầy đủ: Server, Client ID, Username!");
+        alert("⚠️ Vui lòng điền đủ: Server, Client ID, Username!");
         return;
     }
 
+    // Payload gửi cho ESP32 (WiFi tạm thời chỉ gửi kèm, backend đang bỏ qua)
     const config = {
-        ssid: ssid,
-        password: password,
-        server: server,
-        port: port,
-        client_id: client_id,
-        username: mqtt_username,
-        password: mqtt_password || "***"
+        server    : server,
+        port      : port,
+        client_id : client_id,
+        username  : mqtt_username,
+        password  : mqtt_password || "***"  // rỗng = giữ lại password cũ
+        // ssid: ssid,
+        // wifi_password: wifiPassword
     };
 
     try {
@@ -286,15 +257,15 @@ document.getElementById("settingsForm").addEventListener("submit", async functio
         });
 
         const result = await response.json();
-        
+
         if (result.success) {
-            alert("✅ Đã lưu! MQTT đang kết nối...");
+            alert("✅ Đã lưu cấu hình! MQTT sẽ kết nối lại.");
             setTimeout(loadCoreIOTConfig, 500);
         } else {
-            alert("❌ Lỗi: " + result.message);
+            alert("❌ Lỗi: " + (result.message || "Không rõ nguyên nhân"));
         }
     } catch (error) {
-        console.error("❌ Request error:", error);
-        alert("❌ Không thể kết nối ESP32!");
+        console.error("❌ Lỗi gửi config:", error);
+        alert("❌ Không thể kết nối đến ESP32!");
     }
 });
