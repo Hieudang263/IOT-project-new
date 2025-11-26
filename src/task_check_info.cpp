@@ -45,7 +45,7 @@ void Delete_info_File()
     ESP.restart();
 }
 
-void Save_info_File(String wifi_ssid, String wifi_pass, String core_iot_token, String core_iot_server, String core_iot_port)
+void Save_info_File(String wifi_ssid, String wifi_pass, String core_iot_token, String core_iot_server, String core_iot_port, bool restartAfter)
 {
     Serial.println("💾 Đang lưu cấu hình...");
     Serial.println("SSID: " + wifi_ssid);
@@ -69,8 +69,10 @@ void Save_info_File(String wifi_ssid, String wifi_pass, String core_iot_token, S
         Serial.println("❌ Không thể lưu cấu hình!");
     }
 
-    delay(1000);
-    ESP.restart();
+    if (restartAfter) {
+        delay(1000);
+        ESP.restart();
+    }
 }
 
 bool check_info_File(bool check)

@@ -5,6 +5,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #include "global.h"
+#include "task_wifi.h"
 #include "task_check_info.h"
 #include "mainserver.h"
 
@@ -36,7 +37,7 @@ extern bool isWifiConnected;
 extern SemaphoreHandle_t xBinarySemaphoreInternet;
 extern String WIFI_SSID;
 extern String WIFI_PASS;
-extern void Save_info_File(String, String, String, String, String);
+extern void Save_info_File(String, String, String, String, String, bool);
 extern float glob_temperature;
 extern float glob_humidity;
 
@@ -189,8 +190,17 @@ void handleConnect() {
   
   server.send(200, "text/plain", "Connecting to: " + wifi_ssid);
   delay(100);
-  
-  Save_info_File(WIFI_SSID, WIFI_PASS, "", "", "");
+
+  // Save without reboot so we can try to connect immediately
+  Save_info_File(WIFI_SSID, WIFI_PASS, "", "", "", false);
+
+  // Try STA right away; stop AP if connected
+  bool connected = startSTA(true);
+  if (connected) {
+    Serial.println("✅ Port80: STA connected, AP stopped");
+  } else {
+    Serial.println("⚠️ Port80: STA connect failed, keep AP for retry");
+  }
   Serial.println("==============================\n");
 }
 

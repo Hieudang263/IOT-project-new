@@ -57,7 +57,10 @@ void setup()
   loadCoreIOTConfig();
   
   // ✅ 5. Check WiFi info file
-  check_info_File(0);
+  if (check_info_File(0)) {
+    // Try STA immediately if credentials exist
+    startSTA(true);
+  }
   
   // ✅ 6. Create tasks with proper stack sizes
   Serial.println("\n📋 Creating tasks...");

@@ -8,6 +8,7 @@
 // Keep if used across files
 bool Wifi_reconnect();
 
-void startSTA();
+// Return true if STA connects; stopAP=true will turn off softAP on success
+bool startSTA(bool stopAP = true);
 
 #endif

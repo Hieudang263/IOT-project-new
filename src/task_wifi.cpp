@@ -1,10 +1,10 @@
 #include "task_wifi.h"
 
-void startSTA()
+bool startSTA(bool stopAP)
 {
     if (WIFI_SSID.isEmpty()) {
         Serial.println("⚠️ WIFI_SSID empty, cannot connect");
-        return;
+        return false;
     }
 
     Serial.println("\n======== CONNECTING WIFI ========");
@@ -27,13 +27,23 @@ void startSTA()
         Serial.println("✅ WiFi Connected!");
         Serial.println("IP: " + WiFi.localIP().toString());
         
+        if (stopAP) {
+            Serial.println("ℹ️ Turning off AP...");
+            WiFi.softAPdisconnect(true);
+            WiFi.mode(WIFI_STA);
+            Serial.println("✅ AP stopped, STA only");
+        }
+        
         if (xBinarySemaphoreInternet != NULL) {
             xSemaphoreGive(xBinarySemaphoreInternet);
         }
+        return true;
     } else {
         Serial.println("❌ WiFi connection failed (20s timeout)");
+        return false;
     }
     Serial.println("=================================\n");
+    return false;
 }
 
 bool Wifi_reconnect()
