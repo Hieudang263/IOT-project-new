@@ -40,6 +40,7 @@ extern String WIFI_PASS;
 extern void Save_info_File(String, String, String, String, String, bool);
 extern float glob_temperature;
 extern float glob_humidity;
+extern float glob_rain;
 
 // ==================== GLOBAL VARIABLES ====================
 WebServer server(80);
@@ -225,11 +226,16 @@ void handleAPConfig() {
 
 void handleSensor() {
   String json;
-  if (isnan(glob_temperature) || glob_temperature == -1) {
-    json = "{\"error\":true,\"temperature\":0,\"humidity\":0}";
+  bool invalidTemp = isnan(glob_temperature) || glob_temperature == -1;
+  bool invalidHumi = isnan(glob_humidity) || glob_humidity == -1;
+  bool invalidRain = isnan(glob_rain);
+
+  if (invalidTemp && invalidHumi && invalidRain) {
+    json = "{\"error\":true,\"temperature\":0,\"humidity\":0,\"rain\":0}";
   } else {
     json = "{\"error\":false,\"temperature\":" + String(glob_temperature, 1) + 
-           ",\"humidity\":" + String(glob_humidity, 1) + "}";
+           ",\"humidity\":" + String(glob_humidity, 1) + 
+           ",\"rain\":" + String(glob_rain, 1) + "}";
   }
   server.send(200, "application/json", json);
 }

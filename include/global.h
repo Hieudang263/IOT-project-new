@@ -8,6 +8,7 @@
 
 extern float glob_temperature;
 extern float glob_humidity;
+extern float glob_rain;
 extern bool ap_started;
 
 extern String WIFI_SSID;

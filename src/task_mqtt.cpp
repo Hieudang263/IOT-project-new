@@ -6,19 +6,17 @@
 
 void task_mqtt(void *pv) {
     Serial.println("=== MQTT task start ===");
-    // ✅ Đợi semaphore Internet trước khi chạy MQTT
-    Serial.println("⏳ Đợi WiFi kết nối...");
+    Serial.println("⏳ Waiting for WiFi connection...");
     if (xBinarySemaphoreInternet != NULL) {
         xSemaphoreTake(xBinarySemaphoreInternet, portMAX_DELAY);
-        Serial.println("✅ WiFi đã sẵn sàng, bắt đầu MQTT task");
+        Serial.println("✅ WiFi ready, starting MQTT task");
     }
 
     unsigned long lastPublish = 0;
-    bool testMode = true;           // Chế độ test khi chưa có sensor
-    static bool errorLogged = false;  // ✅ FIXED: Khai báo NGOÀI các nhánh if
+    bool testMode = true;            // Send test data if no sensors yet
+    static bool errorLogged = false; // Log once until conditions change
 
     for (;;) {
-        // ✅ Điều kiện hợp lệ để chạy MQTT loop
         if (WiFi.isConnected() &&
             coreiot_server != "" &&
             coreiot_port > 0 &&
@@ -26,43 +24,38 @@ void task_mqtt(void *pv) {
             coreiot_username != "") 
         { 
             coreiot_loop(); 
-
-            // ✅ Reset logged flag khi kết nối OK
             errorLogged = false;
 
-            // ✅ GỬI TELEMETRY MỖI 10 GIÂY
             unsigned long now = millis();
             if (now - lastPublish >= 10000) {
                 lastPublish = now;
 
-                // ✅ KIỂM TRA CÓ SENSOR (logic chặt chẽ hơn)
-                bool hasSensor = (!isnan(glob_temperature) && 
-                                  !isnan(glob_humidity) && 
-                                  glob_temperature != -1 && 
-                                  glob_humidity != -1 &&
-                                  glob_temperature != 0 &&  // ✅ Tránh giá trị khởi tạo
-                                  glob_humidity != 0);
+                bool hasSensor = (!isnan(glob_temperature) &&
+                                  !isnan(glob_humidity) &&
+                                  !isnan(glob_rain) &&
+                                  glob_temperature != -1 &&
+                                  glob_humidity != -1);
 
                 String json;
                 if (hasSensor) {
-                    // ✅ CÓ SENSOR: Gửi dữ liệu thật
                     json = "{\"temperature\":" + String(glob_temperature, 1) + 
                            ",\"humidity\":" + String(glob_humidity, 1) + 
+                           ",\"rain\":" + String(glob_rain, 1) + 
                            ",\"status\":\"sensor_active\"}";
                     
-                    Serial.println("\n📤 Publishing REAL sensor data:");
+                    Serial.println("\n✅ Publishing REAL sensor data:");
                     Serial.println("   Temperature: " + String(glob_temperature, 1) + "°C");
-                    Serial.println("   Humidity: " + String(glob_humidity, 1) + "%");
+                    Serial.println("   Humidity   : " + String(glob_humidity, 1) + "%");
+                    Serial.println("   Rain (ADC%): " + String(glob_rain, 1) + "%");
                     
                     testMode = false;
                 } 
                 else {
-                    // ✅ KHÔNG CÓ SENSOR
                     if (testMode) {
                         json = "{\"message\":\"hello this is test data\",\"status\":\"test_mode\",\"timestamp\":" + String(millis()) + "}";
                         Serial.println("\n🧪 Publishing TEST data (no sensor detected)");
                     } else {
-                        json = "{\"status\":\"sensor_lost\",\"temperature\":0,\"humidity\":0}";
+                        json = "{\"status\":\"sensor_lost\",\"temperature\":0,\"humidity\":0,\"rain\":0}";
                         Serial.println("\n⚠️ Publishing SENSOR LOST warning");
                     }
                 }
@@ -73,18 +66,17 @@ void task_mqtt(void *pv) {
         } 
         else 
         {
-            // ✅ Log lỗi CHỈ MỘT LẦN (nhưng có thể log lại sau khi reconnect)
             if (!errorLogged) {
                 if (coreiot_server == "" || 
                     coreiot_port == 0 || 
                     coreiot_client_id == "" || 
                     coreiot_username == "") 
                 {
-                    Serial.println("⚠️ CoreIOT config chưa đầy đủ, vui lòng vào Settings để cấu hình");
+                    Serial.println("⚠️ CoreIOT config missing, please fill in Settings");
                 } 
                 else 
                 {
-                    Serial.println("⚠️ WiFi mất kết nối, đợi reconnect...");
+                    Serial.println("⚠️ WiFi disconnected, waiting to reconnect...");
                 }
                 errorLogged = true;
             }

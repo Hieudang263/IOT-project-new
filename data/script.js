@@ -8,6 +8,7 @@ window.addEventListener('load', function () {
     initWebSocket();
     initGauges();
     loadCoreIOTConfig();
+    pollSensors();
 });
 
 function initWebSocket() {
@@ -269,3 +270,21 @@ document.getElementById("settingsForm").addEventListener("submit", async functio
         alert("❌ Không thể kết nối đến ESP32!");
     }
 });
+
+// ==================== SENSOR POLLING ====================
+async function pollSensors() {
+    try {
+        const res = await fetch('/sensor');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.error) return;
+        if (window.gaugeTemp) window.gaugeTemp.refresh(data.temperature ?? 0);
+        if (window.gaugeHumi) window.gaugeHumi.refresh(data.humidity ?? 0);
+        if (window.gaugeRain) window.gaugeRain.refresh(data.rain ?? 0);
+    } catch (err) {
+        console.warn('Sensor poll failed', err);
+    }
+}
+
+setInterval(pollSensors, 5000);
+

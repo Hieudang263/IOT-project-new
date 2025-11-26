@@ -2,6 +2,7 @@
 
 float glob_temperature = 0;
 float glob_humidity = 0;
+float glob_rain = 0;
 bool ap_started = false;
 
 String WIFI_SSID;
