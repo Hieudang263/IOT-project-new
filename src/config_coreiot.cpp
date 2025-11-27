@@ -44,6 +44,16 @@ bool loadCoreIOTConfig() {
     Serial.println("   Username: " + coreiot_username);
     Serial.println("   Password: " + String(coreiot_password.length() > 0 ? "***" : "(empty)"));
 
+    ///xoá client_id mặc định cũ nếu có 
+    if (!coreiot_client_id.isEmpty()) {
+        String defaultClientId = "ESP32_" + String((uint32_t)ESP.getEfuseMac(), HEX);
+        if (coreiot_client_id.equalsIgnoreCase(defaultClientId)) {
+            Serial.println("⚠️ Clearing legacy default Client ID");
+            coreiot_client_id = "";
+            saveCoreIOTConfig();
+        }
+    }
+
     return true;
 }
 
