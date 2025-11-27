@@ -24,7 +24,7 @@ function onOpen(event) {
 }
 
 function onClose(event) {
-    console.log('⚠️ WebSocket đóng, thử lại sau 2s...');
+    console.log('⚠️ WebSocket đóng, thử lại sau 2 giây...');
     setTimeout(initWebSocket, 2000);
 }
 
@@ -40,7 +40,7 @@ function onMessage(event) {
             window.gaugeHumi.refresh(data.humi);
         }
     } catch (e) {
-        console.warn("Dữ liệu không phải JSON:", event.data);
+        console.warn("⚠️ Dữ liệu nhận được không phải JSON hợp lệ:", event.data);
     }
 }
 
@@ -50,7 +50,7 @@ function Send_Data(data) {
         websocket.send(payload);
         console.log("📤 Gửi:", payload);
     } else {
-        console.warn("⚠️ WebSocket chưa sẵn sàng, không thể gửi!");
+        console.warn("⚠️ WebSocket chưa sẵn sàng, không thể gửi dữ liệu!");
     }
 }
 
@@ -59,7 +59,7 @@ let relayList = [];
 let deleteTarget = null;
 
 function showSection(id, event) {
-    // Ẩn tất cả section
+    // Ẩn tất cả sections
     document.querySelectorAll('.section').forEach(sec => sec.style.display = 'none');
 
     // Hiện section được chọn
@@ -69,7 +69,7 @@ function showSection(id, event) {
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
     event.currentTarget.classList.add('active');
 
-    // Khi mở Settings thì load config
+    // Tải lại cấu hình khi mở phần Settings
     if (id === 'settings') {
         loadCoreIOTConfig();
     }
@@ -181,80 +181,66 @@ function confirmDelete() {
 }
 
 // ==================== COREIOT CONFIG API ====================
-
-// Load config từ ESP32
 async function loadCoreIOTConfig() {
     try {
         const response = await fetch('/api/coreiot/config');
         if (!response.ok) {
-            console.warn("⚠️ Không load được CoreIOT config");
+            console.warn("⚠️ Không tải được cấu hình CoreIOT!");
             return;
         }
 
         const data = await response.json();
 
-        // Điền vào form (WiFi phần này ESP32 không dùng, chỉ MQTT)
         if (data.server)    document.getElementById('server').value = data.server;
         if (data.port)      document.getElementById('port').value = data.port;
         if (data.client_id) document.getElementById('client_id').value = data.client_id;
         if (data.username)  document.getElementById('mqtt_username').value = data.username;
 
-        // Nếu đã có password trên ESP32 thì báo cho người dùng
         const mqttPassInput = document.getElementById('mqtt_password');
         mqttPassInput.value = "";
-        if (data.password_set) {
-            mqttPassInput.placeholder = "Mật khẩu đã lưu (để trống = giữ nguyên)";
-        } else {
-            mqttPassInput.placeholder = "Password (MQTT)";
-        }
+        mqttPassInput.placeholder = data.password_set
+            ? "Mật khẩu đã lưu (để trống = giữ nguyên)"
+            : "Password (MQTT)";
 
-        console.log("✅ Đã load CoreIOT config");
+        console.log("✅ Đã tải cấu hình CoreIOT");
     } catch (error) {
-        console.error("❌ Lỗi load config:", error);
+        console.error("❌ Lỗi tải cấu hình:", error);
     }
 }
 
-// Lưu config lên ESP32
 document.getElementById("settingsForm").addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    const ssid          = document.getElementById("ssid").value.trim();      // hiện tại ESP32 chưa dùng
-    const wifiPassword  = document.getElementById("password").value.trim();  // hiện tại ESP32 chưa dùng
     const server        = document.getElementById("server").value.trim();
     const portValue     = document.getElementById("port").value.trim();
     const client_id     = document.getElementById("client_id").value.trim();
     const mqtt_username = document.getElementById("mqtt_username").value.trim();
     const mqtt_password = document.getElementById("mqtt_password").value.trim();
 
-    // Kiểm tra port
     const port = parseInt(portValue, 10);
     if (!Number.isInteger(port) || port <= 0 || port > 65535) {
-        alert("⚠️ Port không hợp lệ! (1-65535)");
+        alert("⚠️ Port không hợp lệ! (1–65535)");
         return;
     }
 
-    // Kiểm tra field bắt buộc
     if (!server || !client_id || !mqtt_username) {
-        alert("⚠️ Vui lòng điền đủ: Server, Client ID, Username!");
+        alert("⚠️ Vui lòng điền đủ: Server, Client ID và Username!");
         return;
     }
 
-    // Payload gửi cho ESP32 (WiFi tạm thời chỉ gửi kèm, backend đang bỏ qua)
     const config = {
         server    : server,
         port      : port,
         client_id : client_id,
         username  : mqtt_username,
-        password  : mqtt_password || "***"  // rỗng = giữ lại password cũ
-        // ssid: ssid,
-        // wifi_password: wifiPassword
+        password  : mqtt_password || "***"
     };
 
     try {
         const response = await fetch('/api/coreiot/config', {
-            method: 'POST',
+            method : 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(config)
+            body   : JSON.stringify(config)
         });
 
         const result = await response.json();
@@ -266,7 +252,7 @@ document.getElementById("settingsForm").addEventListener("submit", async functio
             alert("❌ Lỗi: " + (result.message || "Không rõ nguyên nhân"));
         }
     } catch (error) {
-        console.error("❌ Lỗi gửi config:", error);
+        console.error("❌ Lỗi gửi cấu hình:", error);
         alert("❌ Không thể kết nối đến ESP32!");
     }
 });
@@ -276,15 +262,16 @@ async function pollSensors() {
     try {
         const res = await fetch('/sensor');
         if (!res.ok) return;
+
         const data = await res.json();
         if (data.error) return;
+
         if (window.gaugeTemp) window.gaugeTemp.refresh(data.temperature ?? 0);
         if (window.gaugeHumi) window.gaugeHumi.refresh(data.humidity ?? 0);
-        if (window.gaugeRain) window.gaugeRain.refresh(data.rain ?? 0);
+
     } catch (err) {
-        console.warn('Sensor poll failed', err);
+        console.warn('⚠️ Lỗi tải dữ liệu cảm biến', err);
     }
 }
 
 setInterval(pollSensors, 5000);
-

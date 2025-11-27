@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ESP32 Control Panel</title>
 
   <style>
@@ -255,37 +255,37 @@
   <div class="container">
 
     <div class="header">
-      <h1>? ESP32 Control Panel</h1>
-      <p>Access Point Mode - Qu?n l� v� di?u khi?n thi?t b?</p>
+      <h1>⚡ ESP32 Control Panel</h1>
+      <p>Access Point Mode - Quản lý và điều khiển thiết bị</p>
     </div>
 
     <!-- Status Bar -->
     <div class="status-bar">
       <div class="status-indicator">
         <div class="status-dot" id="connectionDot"></div>
-        <span id="connectionStatus">�ang ki?m tra...</span>
+        <span id="connectionStatus">Đang kiểm tra...</span>
       </div>
       <span id="ipAddress">IP: --</span>
     </div>
 
     <div class="tabs">
-      <button class="tab active" onclick="showTab('testmode')">?? Test Mode</button>
-      <button class="tab" onclick="showTab('wifi')">?? WiFi Settings</button>
-      <button class="tab" onclick="showTab('ap')">?? AP Settings</button>
-      <button class="tab" onclick="showTab('sensor')">??? Sensors</button>
+      <button class="tab active" onclick="showTab('testmode')">🧪 Test Mode</button>
+      <button class="tab" onclick="showTab('wifi')">📶 WiFi Settings</button>
+      <button class="tab" onclick="showTab('ap')">📡 AP Settings</button>
+      <button class="tab" onclick="showTab('sensor')">🌡️ Sensors</button>
     </div>
 
     <!-- Test Mode Section -->
     <div id="testmode" class="content-section active">
       <div class="card">
 
-        <h2>?? LED Control</h2>
-        <p>�i?u khi?n d? s�ng c?a 2 LED (Realtime)</p>
+        <h2>💡 LED Control</h2>
+        <p>Điều khiển độ sáng của 2 LED (Realtime)</p>
 
         <div class="led-card">
           <div class="led-header">
             <div class="led-title">
-              <div class="led-icon" id="led1Icon">??</div>
+              <div class="led-icon" id="led1Icon">💡</div>
               <div>
                 <span class="led-name">LED 1 (GPIO 48)</span>
                 <div class="led-status" id="led1Status">OFF</div>
@@ -299,7 +299,7 @@
 
           <div class="brightness-control">
             <div class="brightness-label">
-              <span>�? s�ng</span>
+              <span>Độ sáng</span>
               <span class="brightness-value" id="led1Value">50%</span>
             </div>
             <input type="range" id="led1Brightness" min="0" max="100" value="50" disabled>
@@ -309,7 +309,7 @@
         <div class="led-card">
           <div class="led-header">
             <div class="led-title">
-              <div class="led-icon" id="led2Icon">??</div>
+              <div class="led-icon" id="led2Icon">💡</div>
               <div>
                 <span class="led-name">LED 2 (GPIO 41)</span>
                 <div class="led-status" id="led2Status">OFF</div>
@@ -323,7 +323,7 @@
 
           <div class="brightness-control">
             <div class="brightness-label">
-              <span>�? s�ng</span>
+              <span>Độ sáng</span>
               <span class="brightness-value" id="led2Value">50%</span>
             </div>
             <input type="range" id="led2Brightness" min="0" max="100" value="50" disabled>
@@ -331,7 +331,7 @@
         </div>
 
         <div class="log-panel" id="logPanel">
-          <div class="log-entry info">?? ESP32 Control Panel Ready</div>
+          <div class="log-entry info">🟢 ESP32 Control Panel Ready</div>
         </div>
 
       </div>
@@ -341,47 +341,47 @@
     <div id="wifi" class="content-section">
       <div class="card">
 
-        <h2>?? WiFi Configuration</h2>
-        <p>K?t n?i ESP32 v�o m?ng WiFi</p>
+        <h2>📶 WiFi Configuration</h2>
+        <p>Kết nối ESP32 vào mạng WiFi</p>
 
         <div id="wifiAlert" class="alert"></div>
 
         <button class="btn btn-primary btn-full" onclick="scanWiFi()" id="scanBtn">
-          <span>??</span><span>Qu�t m?ng WiFi</span>
+          <span>🔍</span><span>Quét mạng WiFi</span>
         </button>
 
         <div id="wifiListContainer" style="display: none; margin-top: 20px;">
-          <label style="font-weight: 600; margin-bottom: 8px; display: block;">Ch?n m?ng WiFi:</label>
+          <label style="font-weight: 600; margin-bottom: 8px; display: block;">Chọn mạng WiFi:</label>
           <div class="wifi-list" id="wifiList"></div>
         </div>
 
         <div class="form-group" style="margin-top: 20px;">
-          <label>T�n WiFi (SSID)</label>
-          <input type="text" id="wifiSSID" placeholder="Nh?p t�n WiFi ho?c ch?n t? danh s�ch">
+          <label>Tên WiFi (SSID)</label>
+          <input type="text" id="wifiSSID" placeholder="Nhập tên WiFi hoặc chọn từ danh sách">
         </div>
 
         <div class="form-group">
-          <label>M?t kh?u WiFi</label>
-          <input type="password" id="wifiPassword" placeholder="Nh?p m?t kh?u WiFi">
+          <label>Mật khẩu WiFi</label>
+          <input type="password" id="wifiPassword" placeholder="Nhập mật khẩu WiFi">
         </div>
 
         <div class="btn-group">
           <button class="btn btn-primary" onclick="connectWiFi()" id="connectBtn" style="flex: 1;">
-            <span>??</span><span>K?t n?i</span>
+            <span>🔗</span><span>Kết nối</span>
           </button>
           <button class="btn btn-secondary" onclick="clearWiFiForm()">
-            <span>??</span><span>Reset</span>
+            <span>♻️</span><span>Reset</span>
           </button>
         </div>
 
         <div id="connectionProgress" style="display: none; margin-top: 20px; text-align: center;">
           <div class="spinner"></div>
-          <p style="margin-top: 10px; color: #666;">�ang k?t n?i WiFi... Vui l�ng d?i</p>
-          <p style="font-size: 12px; color: #999;">Qu� tr�nh c� th? m?t 10�15 gi�y</p>
+          <p style="margin-top: 10px; color: #666;">Đang kết nối WiFi... Vui lòng đợi</p>
+          <p style="font-size: 12px; color: #999;">Quá trình có thể mất 10–15 giây</p>
         </div>
 
         <div id="connectionHint" style="display: none; margin-top: 12px; background: #f8f9ff; padding: 12px; border-radius: 10px; color: #444; font-size: 13px; line-height: 1.4;">
-          Sau khi k?t n?i th�nh c�ng, AP s? t?t. Chuy?n sang WiFi nh� v� m? http://<ip-thiet-bi>:8080.
+          Sau khi kết nối thành công, AP sẽ tắt. Chuyển sang WiFi nhà và mở http://<ip-thiet-bi>:8080.
         </div>
 
       </div>
@@ -391,28 +391,28 @@
     <div id="ap" class="content-section">
       <div class="card">
 
-        <h2>?? Access Point Configuration</h2>
-        <p>T�y ch?nh t�n v� m?t kh?u c?a Access Point</p>
+        <h2>📡 Access Point Configuration</h2>
+        <p>Tùy chỉnh tên và mật khẩu của Access Point</p>
 
         <div id="apAlert" class="alert"></div>
 
         <div class="form-group">
-          <label>T�n Access Point (SSID)</label>
+          <label>Tên Access Point (SSID)</label>
           <input type="text" id="apSSID" placeholder="ESP32-Setup-Wifi" value="ESP32-Setup-Wifi">
         </div>
 
         <div class="form-group">
-          <label>M?t kh?u Access Point</label>
+          <label>Mật khẩu Access Point</label>
           <input type="password" id="apPassword" placeholder="123456789" value="123456789">
-          <small>T?i thi?u 8 k� t?</small>
+          <small>Tối thiểu 8 ký tự</small>
         </div>
 
         <button class="btn btn-primary btn-full" onclick="saveAPConfig()">
-          <span>??</span><span>Luu c?u h�nh AP</span>
+          <span>💾</span><span>Lưu cấu hình AP</span>
         </button>
 
         <div style="margin-top: 20px; padding: 16px; background: #fff3cd; border-radius: 10px;">
-          <strong>?? Luu �:</strong> Sau khi luu, ESP32 s? kh?i d?ng l?i. B?n c?n k?t n?i l?i v?i t�n m?i.
+          <strong>⚠️ Lưu ý:</strong> Sau khi lưu, ESP32 sẽ khởi động lại. Bạn cần kết nối lại với tên mới.
         </div>
 
       </div>
@@ -422,36 +422,37 @@
     <div id="sensor" class="content-section">
       <div class="card">
 
-        <h2>??? Sensor Monitor</h2>
-        <p>D? li?u t? c?m bi?n DHT20</p>
+        <h2>🌡️ Sensor Monitor</h2>
+        <p>Dữ liệu từ cảm biến DHT20</p>
 
         <div class="sensor-grid">
           <div class="sensor-item">
-            <div class="sensor-icon">???</div>
-            <div class="sensor-label">Nhi?t d?</div>
+            <div class="sensor-icon">🌡️</div>
+            <div class="sensor-label">Nhiệt độ</div>
             <div class="sensor-value" id="tempValue">--</div>
-            <div class="sensor-unit">�C</div>
-            <div class="sensor-status" id="tempStatus">�ang d?c...</div>
+            <div class="sensor-unit">°C</div>
+            <div class="sensor-status" id="tempStatus">Đang đọc...</div>
           </div>
 
           <div class="sensor-item">
-            <div class="sensor-icon">??</div>
-            <div class="sensor-label">�? ?m</div>
+            <div class="sensor-icon">💧</div>
+            <div class="sensor-label">Độ ẩm</div>
             <div class="sensor-value" id="humiValue">--</div>
             <div class="sensor-unit">%</div>
-            <div class="sensor-status" id="humiStatus">�ang d?c...</div>
+            <div class="sensor-status" id="humiStatus">Đang đọc...</div>
           </div>
 
           <div class="sensor-item">
-            <div class="sensor-icon">???</div>
-            <div class="sensor-label">Luu lu?ng mua (ADC)</div>
+            <div class="sensor-icon">🌧️</div>
+            <div class="sensor-label">Lưu lượng mưa (ADC)</div>
             <div class="sensor-value" id="rainValue">--</div>
             <div class="sensor-unit">%</div>
-            <div class="sensor-status" id="rainStatus">�ang d?c...</div>
+            <div class="sensor-status" id="rainStatus">Đang đọc...</div>
           </div>
         </div>
+
         <button class="btn btn-secondary btn-full" onclick="refreshSensor()" style="margin-top: 20px;">
-          <span>??</span><span>L�m m?i d? li?u</span>
+          <span>🔄</span><span>Làm mới dữ liệu</span>
         </button>
 
       </div>
@@ -460,7 +461,6 @@
   </div>
 
 <script>
-
 // ==================== DEBOUNCE ====================
 function debounce(func, wait) {
   let timeout;
@@ -503,7 +503,7 @@ let ledStates = {
 
 const debouncedControlLED = debounce(function(device, state, brightness) {
   const url = `/control?device=${device}&state=${state}&brightness=${brightness}`;
-  addLog(`?? G?i: LED${device} ${state} @ ${brightness}%`);
+  addLog(`📤 Gửi: LED${device} ${state} @ ${brightness}%`);
 
   fetch(url)
     .then(response => {
@@ -511,11 +511,11 @@ const debouncedControlLED = debounce(function(device, state, brightness) {
       return response.text();
     })
     .then(data => {
-      addLog(`?? LED${device}: ${state} @ ${brightness}%`, 'info');
+      addLog(`✔️ LED${device}: ${state} @ ${brightness}%`, 'info');
       updateLEDUI(device, state === 'ON', brightness);
     })
     .catch(err => {
-      addLog(`? L?i: ${err.message}`, 'error');
+      addLog(`❌ Lỗi: ${err.message}`, 'error');
     });
 }, 100);
 
@@ -564,15 +564,15 @@ function initLEDControls() {
     });
   });
 
-  addLog('?? LED Controls initialized');
+  addLog('🔧 LED Controls initialized');
 }
 
 // ==================== WIFI ====================
 function scanWiFi() {
   const scanBtn = document.getElementById('scanBtn');
   scanBtn.disabled = true;
-  scanBtn.innerHTML = '<div class="spinner"></div><span>�ang qu�t...</span>';
-  showAlert('wifiAlert', '�ang qu�t m?ng WiFi...', 'info');
+  scanBtn.innerHTML = '<div class="spinner"></div><span>Đang quét...</span>';
+  showAlert('wifiAlert', 'Đang quét mạng WiFi...', 'info');
 
   fetch('/scan')
     .then(response => response.json())
@@ -598,16 +598,16 @@ function scanWiFi() {
           item.onclick = () => selectWiFi(network.ssid, network.encryption, item);
 
           const signalLabel =
-            network.rssi > -55 ? 'T�n hi?u m?nh' :
-            network.rssi > -70 ? 'T�n hi?u trung b�nh' :
-                                 'T�n hi?u y?u';
+            network.rssi > -55 ? 'Tín hiệu mạnh' :
+            network.rssi > -70 ? 'Tín hiệu trung bình' :
+                                 'Tín hiệu yếu';
 
           item.innerHTML = `
             <div class="wifi-info">
-              <span class="wifi-signal">??</span>
+              <span class="wifi-signal">📶</span>
               <div>
                 <div class="wifi-name">${network.ssid}</div>
-                <div class="wifi-security">?? ${network.encryption} - ${signalLabel}</div>
+                <div class="wifi-security">🔒 ${network.encryption} - ${signalLabel}</div>
               </div>
             </div>
           `;
@@ -615,17 +615,17 @@ function scanWiFi() {
         });
 
         document.getElementById('wifiListContainer').style.display = 'block';
-        showAlert('wifiAlert', `T�m th?y ${networks.length} m?ng WiFi`, 'success');
+        showAlert('wifiAlert', `Tìm thấy ${networks.length} mạng WiFi`, 'success');
       } else {
-        showAlert('wifiAlert', 'Kh�ng t�m th?y m?ng WiFi n�o', 'warning');
+        showAlert('wifiAlert', 'Không tìm thấy mạng WiFi nào', 'warning');
       }
     })
     .catch(err => {
-      showAlert('wifiAlert', 'L?i qu�t WiFi: ' + err.message, 'error');
+      showAlert('wifiAlert', 'Lỗi quét WiFi: ' + err.message, 'error');
     })
     .finally(() => {
       scanBtn.disabled = false;
-      scanBtn.innerHTML = '<span>??</span><span>Qu�t m?ng WiFi</span>';
+      scanBtn.innerHTML = '<span>🔍</span><span>Quét mạng WiFi</span>';
     });
 }
 
@@ -647,22 +647,22 @@ function connectWiFi() {
   const hint = document.getElementById('connectionHint');
 
   if (!ssid) {
-    showAlert('wifiAlert', 'Vui l�ng nh?p t�n WiFi!', 'error');
+    showAlert('wifiAlert', 'Vui lòng nhập tên WiFi!', 'error');
     return;
   }
 
   connectBtn.disabled = true;
   progress.style.display = 'block';
   hint.style.display = 'block';
-  hint.textContent = 'ESP32 dang th? k?t n?i... AP mode s? t?t n?u th�nh c�ng (~15s)';
-  showAlert('wifiAlert', '�ang k?t n?i WiFi...', 'info');
+  hint.textContent = 'ESP32 đang thử kết nối... AP mode sẽ tắt nếu thành công (~15s)';
+  showAlert('wifiAlert', 'Đang kết nối WiFi...', 'info');
 
   const url = `/connect?ssid=${encodeURIComponent(ssid)}&pass=${encodeURIComponent(password)}`;
 
   fetch(url)
     .then(response => response.text())
     .then(data => {
-      showAlert('wifiAlert', 'Y�u c?u k?t n?i d� g?i! ESP32 dang x? l�...', 'success');
+      showAlert('wifiAlert', 'Yêu cầu kết nối đã gửi! ESP32 đang xử lý...', 'success');
 
       let attempts = 0;
       const maxAttempts = 20;
@@ -674,8 +674,8 @@ function connectWiFi() {
           clearInterval(checkConnection);
           progress.style.display = 'none';
           connectBtn.disabled = false;
-          hint.textContent = 'Timeout. Vui l�ng ki?m tra Serial ho?c th�ng tin WiFi.';
-          showAlert('wifiAlert', 'Timeout! Ki?m tra Serial Monitor d? xem k?t qu?', 'warning');
+          hint.textContent = 'Timeout. Vui lòng kiểm tra Serial hoặc thông tin WiFi.';
+          showAlert('wifiAlert', 'Timeout! Kiểm tra Serial Monitor để xem kết quả', 'warning');
           return;
         }
 
@@ -685,8 +685,8 @@ function connectWiFi() {
               clearInterval(checkConnection);
               progress.style.display = 'none';
               connectBtn.disabled = false;
-              showAlert('wifiAlert', 'K?t n?i th�nh c�ng! AP s? t?t, chuy?n sang WiFi nh�.', 'success');
-              hint.textContent = '�� k?t n?i. D�ng http://<ip-thiet-bi>:8080 d? truy c?p.';
+              showAlert('wifiAlert', 'Kết nối thành công! AP sẽ tắt, chuyển sang WiFi nhà.', 'success');
+              hint.textContent = 'Đã kết nối. Dùng http://<ip-thiet-bi>:8080 để truy cập.';
               checkDeviceStatus();
             }
           })
@@ -696,8 +696,8 @@ function connectWiFi() {
     .catch(err => {
       progress.style.display = 'none';
       connectBtn.disabled = false;
-      hint.textContent = 'Kh�ng g?i du?c y�u c?u /connect. Th? l?i.';
-      showAlert('wifiAlert', 'L?i: ' + err.message, 'error');
+      hint.textContent = 'Không gửi được yêu cầu /connect. Thử lại.';
+      showAlert('wifiAlert', 'Lỗi: ' + err.message, 'error');
     });
 }
 
@@ -713,66 +713,66 @@ function saveAPConfig() {
   const password = document.getElementById('apPassword').value;
 
   if (!ssid) {
-    showAlert('apAlert', 'Vui l�ng nh?p t�n AP!', 'error');
+    showAlert('apAlert', 'Vui lòng nhập tên AP!', 'error');
     return;
   }
 
   if (password && password.length < 8) {
-    showAlert('apAlert', 'M?t kh?u ph?i c� �t nh?t 8 k� t?!', 'error');
+    showAlert('apAlert', 'Mật khẩu phải có ít nhất 8 ký tự!', 'error');
     return;
   }
 
-  showAlert('apAlert', '�ang luu...', 'info');
+  showAlert('apAlert', 'Đang lưu...', 'info');
 
   fetch(`/apconfig?ssid=${encodeURIComponent(ssid)}&pass=${encodeURIComponent(password)}`)
     .then(response => response.text())
     .then(data => {
-      showAlert('apAlert', '�� luu! ESP32 s? kh?i d?ng l?i trong 3 gi�y...', 'success');
+      showAlert('apAlert', 'Đã lưu! ESP32 sẽ khởi động lại trong 3 giây...', 'success');
       setTimeout(() => {
-        showAlert('apAlert', `�ang kh?i d?ng l?i... K?t n?i v?i WiFi m?i: ${ssid}`, 'warning');
+        showAlert('apAlert', `Đang khởi động lại... Kết nối với WiFi mới: ${ssid}`, 'warning');
       }, 3000);
     })
     .catch(err => {
-      showAlert('apAlert', 'L?i: ' + err.message, 'error');
+      showAlert('apAlert', 'Lỗi: ' + err.message, 'error');
     });
 }
 
 // ==================== SENSOR ====================
 function refreshSensor() {
-  document.getElementById("tempValue").textContent = "--";
-  document.getElementById("humiValue").textContent = "--";
-  document.getElementById("rainValue").textContent = "--";
-  document.getElementById("tempStatus").textContent = "�ang d?c...";
-  document.getElementById("humiStatus").textContent = "�ang d?c...";
-  document.getElementById("rainStatus").textContent = "�ang d?c...";
+  document.getElementById('tempValue').textContent = '--';
+  document.getElementById('humiValue').textContent = '--';
+  document.getElementById('rainValue').textContent = '--';
+  document.getElementById('tempStatus').textContent = 'Đang đọc...';
+  document.getElementById('humiStatus').textContent = 'Đang đọc...';
+  document.getElementById('rainStatus').textContent = 'Đang đọc...';
 
-  fetch("/sensor")
+  fetch('/sensor')
     .then(response => response.json())
     .then(data => {
       const time = new Date().toLocaleTimeString();
       if (data.error) {
-        document.getElementById("tempValue").textContent = "N/A";
-        document.getElementById("humiValue").textContent = "N/A";
-        document.getElementById("rainValue").textContent = "N/A";
-        document.getElementById("tempStatus").textContent = "? Kh�ng c� c?m bi?n";
-        document.getElementById("humiStatus").textContent = "? Kh�ng c� c?m bi?n";
-        document.getElementById("rainStatus").textContent = "? Kh�ng c� c?m bi?n";
+        document.getElementById('tempValue').textContent = 'N/A';
+        document.getElementById('humiValue').textContent = 'N/A';
+        document.getElementById('rainValue').textContent = 'N/A';
+        document.getElementById('tempStatus').textContent = '❌ Không có cảm biến';
+        document.getElementById('humiStatus').textContent = '❌ Không có cảm biến';
+        document.getElementById('rainStatus').textContent = '❌ Không có cảm biến';
       } else {
-        document.getElementById("tempValue").textContent = data.temperature.toFixed(1);
-        document.getElementById("humiValue").textContent = data.humidity.toFixed(1);
-        document.getElementById("rainValue").textContent = (data.rain ?? 0).toFixed(1);
-        document.getElementById("tempStatus").textContent = `?? ${time}`;
-        document.getElementById("humiStatus").textContent = `?? ${time}`;
-        document.getElementById("rainStatus").textContent = `?? ${time}`;
+        document.getElementById('tempValue').textContent = data.temperature.toFixed(1);
+        document.getElementById('humiValue').textContent = data.humidity.toFixed(1);
+        document.getElementById('rainValue').textContent = (data.rain ?? 0).toFixed(1);
+        document.getElementById('tempStatus').textContent = `✔️ ${time}`;
+        document.getElementById('humiStatus').textContent = `✔️ ${time}`;
+        document.getElementById('rainStatus').textContent = `✔️ ${time}`;
       }
     })
     .catch(err => {
-      document.getElementById("tempValue").textContent = "ERR";
-      document.getElementById("humiValue").textContent = "ERR";
-      document.getElementById("rainValue").textContent = "ERR";
-      document.getElementById("tempStatus").textContent = "? L?i k?t n?i";
-      document.getElementById("humiStatus").textContent = "? L?i k?t n?i";
-      document.getElementById("rainStatus").textContent = "? L?i k?t n?i";
+      document.getElementById('tempValue').textContent = 'ERR';
+      document.getElementById('humiValue').textContent = 'ERR';
+      document.getElementById('rainValue').textContent = 'ERR';
+      document.getElementById('tempStatus').textContent = '❌ Lỗi kết nối';
+      document.getElementById('humiStatus').textContent = '❌ Lỗi kết nối';
+      document.getElementById('rainStatus').textContent = '❌ Lỗi kết nối';
     });
 }
 
@@ -799,13 +799,13 @@ function checkDeviceStatus() {
     .then(response => {
       if (response.ok) {
         document.getElementById('connectionDot').className = 'status-dot connected';
-        document.getElementById('connectionStatus').textContent = '�� k?t n?i';
+        document.getElementById('connectionStatus').textContent = 'Đã kết nối';
         document.getElementById('ipAddress').textContent = 'IP: ' + window.location.hostname;
       }
     })
     .catch(() => {
       document.getElementById('connectionDot').className = 'status-dot disconnected';
-      document.getElementById('connectionStatus').textContent = 'M?t k?t n?i';
+      document.getElementById('connectionStatus').textContent = 'Mất kết nối';
     });
 }
 
@@ -814,11 +814,9 @@ window.addEventListener('load', function() {
   initLEDControls();
   checkDeviceStatus();
   setInterval(checkDeviceStatus, 10000);
-  addLog('?? ESP32 Control Panel loaded');
+  addLog('⚙️ ESP32 Control Panel loaded');
 });
-
 </script>
 
 </body>
 </html>
-

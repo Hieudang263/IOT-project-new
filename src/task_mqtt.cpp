@@ -31,10 +31,12 @@ void task_mqtt(void *pv) {
                 lastPublish = now;
 
                 bool hasSensor = (!isnan(glob_temperature) &&
-                                  !isnan(glob_humidity) &&
-                                  !isnan(glob_rain) &&
-                                  glob_temperature != -1 &&
-                                  glob_humidity != -1);
+                  !isnan(glob_humidity) &&
+                  !isnan(glob_rain) &&
+                  glob_temperature != -1 &&
+                  glob_humidity != -1 &&
+                  glob_temperature != 0 &&  // <--- Thêm dòng này
+                  glob_humidity != 0);      // <--- Thêm dòng này
 
                 String json;
                 if (hasSensor) {

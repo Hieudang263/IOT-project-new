@@ -150,11 +150,9 @@ body {
   color        : white;
   border       : none;
   border-radius: 50%;
-  width        : 80px;
-  /* to hÆ¡n chÃºt */
+  width        : 80px;  /* to hơn chút */
   height       : 80px;
-  font-size    : 34px;
-  /* icon lá»›n hÆ¡n */
+  font-size    : 34px; /* icon lớn hơn */
   cursor       : pointer;
   box-shadow   : 0 6px 20px rgba(0, 0, 0, 0.25);
   transition   : 0.3s;
@@ -164,7 +162,6 @@ body {
   transform : scale(1.08);
   box-shadow: 0 8px 25px rgba(34, 148, 242, 0.4);
 }
-
 
 /* Settings */
 .settings-section {
@@ -180,8 +177,7 @@ body {
   padding      : 50px 60px;
   border-radius: 20px;
   box-shadow   : 0 10px 25px rgba(0, 0, 0, 0.15);
-  width        : 850px;
-  /* âœ… to hÆ¡n */
+  width        : 850px;   /* to hơn */
   max-width    : 95%;
   text-align   : center;
 }
@@ -197,7 +193,7 @@ body {
   font-size    : 15px;
 }
 
-/* FORM STYLE â€” vertical layout with spacing */
+/* FORM STYLE — bố cục dọc, có khoảng cách */
 #settingsForm {
   width         : 100%;
   display       : flex;
@@ -205,15 +201,12 @@ body {
   align-items   : center;
 }
 
-/* má»—i input-group lÃ  1 dÃ²ng, cÃ¡ch nhau */
+/* mỗi input-group là 1 dòng, cách nhau */
 .input-group {
   position     : relative;
-  width        : 98%;
-  /* âœ… rá»™ng gáº§n háº¿t khung */
-  max-width    : 760px;
-  /* âœ… dÃ i hÆ¡n háº³n */
-  margin-bottom: 20px;
-  /* âœ… táº¡o khoáº£ng cÃ¡ch giá»¯a cÃ¡c dÃ²ng */
+  width        : 98%;     /* rộng gần hết khung */
+  max-width    : 760px;   /* dài hơn */
+  margin-bottom: 20px;    /* tạo khoảng cách */
 }
 
 .input-group i {
@@ -261,7 +254,6 @@ body {
   transform : translateY(-2px);
   box-shadow: 0 8px 22px rgba(34, 148, 242, 0.55);
 }
-
 
 /* Dialog */
 .dialog-overlay {
