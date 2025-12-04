@@ -365,6 +365,13 @@
           <input type="password" id="wifiPassword" placeholder="Nhập mật khẩu WiFi">
         </div>
 
+        <!-- Thêm input username sau password (ban đầu ẩn) -->
+        <div class="form-group" id="wifiUsernameGroup" style="display: none;">
+          <label>Username (WPA2-Enterprise)</label>
+          <input type="text" id="wifiUsername" placeholder="Nhập username">
+          <small>Chỉ dùng cho WiFi trường/doanh nghiệp</small>
+        </div>
+
         <div class="btn-group">
           <button class="btn btn-primary" onclick="connectWiFi()" id="connectBtn" style="flex: 1;">
             <span>🔗</span><span>Kết nối</span>
@@ -595,18 +602,30 @@ function scanWiFi() {
         networks.forEach(network => {
           const item = document.createElement('div');
           item.className = 'wifi-item';
-          item.onclick = () => selectWiFi(network.ssid, network.encryption, item);
+          
+          // ✅ TRUYỀN THÊM isEnterprise
+          item.onclick = () => selectWiFi(
+            network.ssid, 
+            network.encryption, 
+            network.is_enterprise,  // ← Thêm parameter
+            item
+          );
 
           const signalLabel =
             network.rssi > -55 ? 'Tín hiệu mạnh' :
             network.rssi > -70 ? 'Tín hiệu trung bình' :
                                  'Tín hiệu yếu';
+            
+          // ✅ HIỆN BADGE NẾU LÀ ENTERPRISE
+          const enterpriseBadge = network.is_enterprise 
+            ? '<span style="background:#ff9800;color:white;padding:2px 8px;border-radius:4px;font-size:11px;margin-left:6px;font-weight:600;">🏢 ENTERPRISE</span>'
+            : '';
 
           item.innerHTML = `
             <div class="wifi-info">
               <span class="wifi-signal">📶</span>
               <div>
-                <div class="wifi-name">${network.ssid}</div>
+                <div class="wifi-name">${network.ssid}${enterpriseBadge}</div>
                 <div class="wifi-security">🔒 ${network.encryption} - ${signalLabel}</div>
               </div>
             </div>
@@ -629,19 +648,30 @@ function scanWiFi() {
     });
 }
 
-function selectWiFi(ssid, encryption, element) {
+function selectWiFi(ssid, encryption, isEnterprise, element) {
   document.getElementById('wifiSSID').value = ssid;
   document.querySelectorAll('.wifi-item').forEach(i => i.classList.remove('selected'));
   element.classList.add('selected');
 
-  if (encryption !== 'Open') {
-    document.getElementById('wifiPassword').focus();
+  // ✅ HIỆN/ẨN USERNAME DỰA VÀO LOẠI WIFI
+  const usernameGroup = document.getElementById('wifiUsernameGroup');
+  const passwordInput = document.getElementById('wifiPassword');
+  
+  if (isEnterprise) {
+    usernameGroup.style.display = 'block';  // ✅ Hiện username
+    document.getElementById('wifiUsername').focus();
+  } else {
+    usernameGroup.style.display = 'none';   // ❌ Ẩn username
+    if (encryption !== 'Open') {
+      passwordInput.focus();
+    }
   }
 }
 
 function connectWiFi() {
   const ssid = document.getElementById('wifiSSID').value.trim();
   const password = document.getElementById('wifiPassword').value;
+  const username = document.getElementById('wifiUsername').value.trim();
   const connectBtn = document.getElementById('connectBtn');
   const progress = document.getElementById('connectionProgress');
   const hint = document.getElementById('connectionHint');
@@ -657,7 +687,7 @@ function connectWiFi() {
   hint.textContent = 'ESP32 đang thử kết nối... AP mode sẽ tắt nếu thành công (~15s)';
   showAlert('wifiAlert', 'Đang kết nối WiFi...', 'info');
 
-  const url = `/connect?ssid=${encodeURIComponent(ssid)}&pass=${encodeURIComponent(password)}`;
+  const url = `/connect?ssid=${encodeURIComponent(ssid)}&pass=${encodeURIComponent(password)}&user=${encodeURIComponent(username)}`;
 
   fetch(url)
     .then(response => response.text())
@@ -704,6 +734,8 @@ function connectWiFi() {
 function clearWiFiForm() {
   document.getElementById('wifiSSID').value = '';
   document.getElementById('wifiPassword').value = '';
+  document.getElementById('wifiUsername').value = '';
+  document.getElementById('wifiUsernameGroup').style.display = 'none';  // ✅ THÊM DÒNG NÀY
   document.querySelectorAll('.wifi-item').forEach(i => i.classList.remove('selected'));
 }
 

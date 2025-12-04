@@ -5,8 +5,9 @@ float glob_humidity = 0;
 float glob_rain = 0;
 bool ap_started = false;
 
-String WIFI_SSID;
-String WIFI_PASS;
+String WIFI_SSID = "";
+String WIFI_PASS = "";
+String WIFI_USERNAME = ""; 
 String CORE_IOT_TOKEN;
 String CORE_IOT_SERVER;
 String CORE_IOT_PORT;

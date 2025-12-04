@@ -24,12 +24,17 @@ void Load_info_File()
     {
         WIFI_SSID = doc["WIFI_SSID"] | "";
         WIFI_PASS = doc["WIFI_PASS"] | "";
+        WIFI_USERNAME = doc["WIFI_USERNAME"] | "";
         CORE_IOT_TOKEN = doc["CORE_IOT_TOKEN"] | "";
         CORE_IOT_SERVER = doc["CORE_IOT_SERVER"] | "";
         CORE_IOT_PORT = doc["CORE_IOT_PORT"] | "";
         
         Serial.println("✅ Đã load cấu hình:");
         Serial.println("SSID: " + WIFI_SSID);
+        Serial.println("Pass: " + String(WIFI_PASS.length()) + " chars");  // ✅ THÊM DÒNG NÀY
+        if (!WIFI_USERNAME.isEmpty()) {
+            Serial.println("Username: " + WIFI_USERNAME + " (WPA2-Enterprise)");
+        }
     }
     
     file.close();
@@ -53,6 +58,7 @@ void Save_info_File(String wifi_ssid, String wifi_pass, String core_iot_token, S
     DynamicJsonDocument doc(4096);
     doc["WIFI_SSID"] = wifi_ssid;
     doc["WIFI_PASS"] = wifi_pass;
+    doc["WIFI_USERNAME"] = WIFI_USERNAME;  // ✅ THÊM DÒNG NÀY - Lưu username hiện tại
     doc["CORE_IOT_TOKEN"] = core_iot_token;
     doc["CORE_IOT_SERVER"] = core_iot_server;
     doc["CORE_IOT_PORT"] = core_iot_port;
