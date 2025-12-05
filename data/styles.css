@@ -19,17 +19,23 @@ body {
 
 .logo-container {
   width          : 100%;
+  height         : 200px; /* tăng chiều cao vùng logo */
   background     : white;
   display        : flex;
   justify-content: center;
   align-items    : center;
-  padding        : 20px 0;
   border-bottom  : 2px solid rgba(0, 0, 0, 0.1);
+  padding        : 0;
 }
 
 .logo-img {
-  width : 80%;
-  height: auto;
+  width      : 100%;      /* chiếm toàn bộ chiều ngang vùng logo */
+  max-width  : 240px;     /* cho phép lớn hơn nữa */
+  height     : 100%;      /* chiếm toàn bộ chiều cao vùng logo */
+  max-height : 180px;     /* cho phép cao hơn nữa */
+  object-fit : contain;   /* giữ tỉ lệ, không bị méo */
+  display    : block;
+  margin     : 0 auto;
 }
 
 .nav-item {

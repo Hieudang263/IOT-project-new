@@ -111,6 +111,9 @@ void connnectWSV() {
     dashboardServer.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest *req) {
         req->send(LittleFS, "/styles.css", "text/css");
     });
+    dashboardServer.on("/logo.png", HTTP_GET, [](AsyncWebServerRequest *req) {
+        req->send(LittleFS, "/logo.png", "image/png");
+    });
 
     // LED control (reuse logic from mainserver.cpp)
     dashboardServer.on("/control", HTTP_GET, [](AsyncWebServerRequest *req) {
